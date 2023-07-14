@@ -20,6 +20,7 @@ public class PlayerMovement : MonoBehaviour
 
     Vector3 velocity;
     bool isGrounded;
+    bool isSprinting;
     private int consecutiveJumps = 0;
 
     // Update is called once per frame
@@ -34,14 +35,21 @@ public class PlayerMovement : MonoBehaviour
         float x = Input.GetAxisRaw("Horizontal");
         float z = Input.GetAxisRaw("Vertical");
 
+        if(z > 0f) {
+            isSprinting = true;
+        } else {
+            isSprinting = false;
+        }
+
         Vector3 move;
 
         if(isGrounded){
             move = transform.right * x + transform.forward * z;
-        } else if (z > 0f) {
+        } else if (isSprinting) {
             move = transform.right * x/2 + transform.forward * z;
         } else {
             move = transform.right * x/2 + transform.forward * z/2;
+            consecutiveJumps = 0;
         }
 
         controller.Move(move * speed * Time.deltaTime);
@@ -51,7 +59,7 @@ public class PlayerMovement : MonoBehaviour
         if(Input.GetButton("Jump") && isGrounded) { //used GetButton so that you can hold down space
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             consecutiveJumps++;
-            if (z != 0) { //only increase speed if player is actually moving
+            if (isSprinting) { //only increase speed if player is actually moving
                 if (speed < jumpSpeed) { //gradually increase speed while chaining jumps
                     speed = walkingSpeed + 2 + Mathf.Sqrt(consecutiveJumps);
                 } else { //clamp jump speed to 20
