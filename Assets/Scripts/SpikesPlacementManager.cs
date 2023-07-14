@@ -6,6 +6,8 @@ public class SpikesPlacementManager : MonoBehaviour
 {
     //spike vars
     public int state = 0;
+
+    [Header("Spikes")]
     public List<GameObject> spikePrefabs = new List<GameObject>(); 
     public List<GameObject> spikes = new List<GameObject>(); 
     public const float SPIKEX = 2.757577f;
@@ -45,6 +47,11 @@ public class SpikesPlacementManager : MonoBehaviour
             } else if (state == 1 && readyToThrow) {
                 Throw();
             }
+        }
+        if(Input.GetButton("Slot1")) {
+            state = 0;
+        } else if (Input.GetButton("Slot2")) {
+            state = 1;
         }
     }
     private void placeSpike() {

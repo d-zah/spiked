@@ -924,7 +924,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 607689856}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.52, z: 2.25}
+  m_LocalPosition: {x: 0, y: 1.52, z: 2.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1616,7 +1616,7 @@ MonoBehaviour:
   spikeID: 0
   cam: {fileID: 963194228}
   attackPoint: {fileID: 607689857}
-  objectToThrow: {fileID: 3128897808059952321, guid: a8df47c6f2275044e850c9ec2c0c17e2, type: 3}
+  objectToThrow: {fileID: 362157076532663442, guid: c72b7dd9207b64f4cbd3efb41d670366, type: 3}
   totalThrows: 0
   throwCooldown: 1
   throwForce: 70
