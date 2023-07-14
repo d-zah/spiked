@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class SpikesPlacementManager : MonoBehaviour
 {
-
+    //spike vars
+    public int state = 0;
     public List<GameObject> spikePrefabs = new List<GameObject>(); 
     public List<GameObject> spikes = new List<GameObject>(); 
     public const float SPIKEX = 2.757577f;
@@ -12,17 +13,42 @@ public class SpikesPlacementManager : MonoBehaviour
     public GameObject foundObject;
     public int spikeID;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    //projectile vars
+    [Header("References")]
+    public Transform cam;
+    public Transform attackPoint;
+    public GameObject objectToThrow;
+
+    [Header("Settings")]
+    public int totalThrows;
+    public float throwCooldown;
+
+    [Header("Throwing")]
+    public float throwForce;
+    public float throwUpwardForce;
+
+    bool readyToThrow;
+
+    private void Start() {
+        readyToThrow = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetButton("Fire2")) {
-            RaycastHit hit;
+        
+        if(Input.GetButton("Fire1")) {
+            breakSpike();      
+        } else if(Input.GetButton("Fire2")) {
+            if(state == 0) {
+                placeSpike();
+            } else if (state == 1 && readyToThrow) {
+                Throw();
+            }
+        }
+    }
+    private void placeSpike() {
+        RaycastHit hit;
 
             if(Physics.Raycast(transform.position, transform.forward, out hit, 15f, 1 << LayerMask.NameToLayer("Ground"))) {
                 
@@ -42,6 +68,7 @@ public class SpikesPlacementManager : MonoBehaviour
                         
                     }
                     if(check){
+                    
                         GameObject newSpike = Instantiate(spikePrefabs[0], hit.point, Quaternion.identity);
                         newSpike.name = "spike" + spikeID;
                         spikeID++;
@@ -53,8 +80,9 @@ public class SpikesPlacementManager : MonoBehaviour
                 }
                 
             }
-        }
-        if(Input.GetButton("Fire1")) {
+    }
+
+    private void breakSpike() {
             RaycastHit hit;
 
             if(Physics.Raycast(transform.position, transform.forward, out hit, 15f, 1 << LayerMask.NameToLayer("Spikes"))) {
@@ -66,14 +94,25 @@ public class SpikesPlacementManager : MonoBehaviour
 
                 }       
             }
-                // if(check){
-                //     spikes.Add(Instantiate(spikePrefabs[0], hit.point, Quaternion.identity));
-                //     // Debug.Log(hit.point);
-                // }
-                        
-                
-                
-        }
     }
+    private void Throw(){
+        readyToThrow = false;
+
+        GameObject projectile = Instantiate(objectToThrow, attackPoint.position, cam.rotation);
+
+        Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
+
+        Vector3 forceToAdd = cam.transform.forward * throwForce + transform.up * throwUpwardForce;
+
+        projectileRb.AddForce(forceToAdd, ForceMode.Impulse);
+
+        Invoke(nameof(ResetThrow), throwCooldown);
+    }
+
+    private void ResetThrow() {
+        readyToThrow = true;
+    }
+
+
 }
 
