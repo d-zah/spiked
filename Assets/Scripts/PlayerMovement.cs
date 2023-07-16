@@ -89,7 +89,8 @@ public class PlayerMovement : NetworkBehaviour
         speed = walkingSpeed;
         consecutiveJumps = 0;
         controller.enabled = false; //have to disable controller in order to adjust position
-        playerTransform.position = new Vector3(-5f, 10f, 0f);
+        playerTransform.position = new Vector3(-74f, 3f, 0f);
+        transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
         controller.enabled = true;  
     }
 }
