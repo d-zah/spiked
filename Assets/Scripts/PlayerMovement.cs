@@ -1,17 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
 {
 
     public CharacterController controller;
-    public float speed = 12f;
-    public float walkingSpeed = 12f;
-    public float gravity = -9.81f;
-    public float jumpHeight = 3f;
-    public float groundDistance = 0.4f;
-    public float jumpSpeed = 20f;
+    [SerializeField] private float speed = 12f;
+    [SerializeField] private float walkingSpeed = 12f;
+    [SerializeField] private float gravity = -9.81f;
+    [SerializeField] private float jumpHeight = 3f;
+    [SerializeField] private float groundDistance = 0.4f;
+    [SerializeField] private float jumpSpeed = 20f;
     // public float jumpSpeedDecay = .1f;
 
     public Transform groundCheck;
@@ -21,11 +22,14 @@ public class PlayerMovement : MonoBehaviour
     Vector3 velocity;
     bool isGrounded;
     bool isSprinting;
-    private int consecutiveJumps = 0;
+    [SerializeField] private int consecutiveJumps = 0;
+
 
     // Update is called once per frame
     void Update()
     {
+        if(!IsOwner || !Application.isFocused) return;
+
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
         if(isGrounded && velocity.y < 0){

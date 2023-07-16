@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class SpikesPlacementManager : MonoBehaviour
+public class SpikesPlacementManager : NetworkBehaviour
 {
     //spike vars
     public int state = 0;
@@ -29,16 +30,15 @@ public class SpikesPlacementManager : MonoBehaviour
     public float throwForce;
     public float throwUpwardForce;
 
-    bool readyToThrow;
+    bool readyToThrow = true;
 
-    private void Start() {
-        readyToThrow = true;
-    }
+
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(!IsOwner || !Application.isFocused) return;
+
         if(Input.GetButton("Fire1")) {
             breakSpike();      
         } else if(Input.GetButton("Fire2")) {

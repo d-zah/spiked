@@ -1,12 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class MouseLook : MonoBehaviour
+public class MouseLook : NetworkBehaviour
 {
+
     public float mouseSensitivity = 100f;
     public Transform playerBody;
+    public Camera mainCamera;
     float xRotation = 0f;
+
+    private void Initialize() {
+        mainCamera = Camera.main;
+    }
+
+    public override void OnNetworkSpawn() {
+        if(!IsOwner){
+            Destroy(this.gameObject);
+            // Destroy(this.GetComponent<Camera>());
+            // Destroy(this);
+        } else {
+            base.OnNetworkSpawn();
+            Initialize();
+        }
+        
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -17,6 +36,8 @@ public class MouseLook : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(!IsOwner || !Application.isFocused) return;
+
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * 0.001f;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * 0.001f;
 
