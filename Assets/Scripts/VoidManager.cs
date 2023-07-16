@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class VoidManager : MonoBehaviour
 {
-    // Start is called before the first frame update
     void OnTriggerEnter(Collider other) {
+        if(!other.CompareTag("Player")) return;
+
         other.SendMessage("resetPosition");
     }
 

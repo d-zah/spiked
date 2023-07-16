@@ -57,7 +57,7 @@ public class SpikesPlacementManager : NetworkBehaviour
     private void placeSpike() {
         RaycastHit hit;
 
-            if(Physics.Raycast(transform.position, transform.forward, out hit, 15f, 1 << LayerMask.NameToLayer("Ground"))) {
+            if(Physics.Raycast(transform.position, transform.forward, out hit, 15f, 1 << LayerMask.NameToLayer("Ground")) && GameObject.Find(hit.collider.gameObject.name).tag != "SpawnPlatform") {
                 
                 if(hit.normal == Vector3.up){
                     bool check = true;

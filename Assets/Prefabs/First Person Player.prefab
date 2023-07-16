@@ -139,6 +139,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mouseSensitivity: 500
   playerBody: {fileID: 4355671970147970682}
+  mainCamera: {fileID: 0}
 --- !u!114 &5587431572606318549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -315,7 +316,7 @@ GameObject:
   - component: {fileID: 903555629984601003}
   m_Layer: 0
   m_Name: First Person Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
