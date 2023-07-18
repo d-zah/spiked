@@ -15,6 +15,8 @@ public class SpikesPlacementManager : NetworkBehaviour
     public const float SPIKEZ = 2.982507f;
     public GameObject foundObject;
     public int spikeID;
+    public RaycastHit hit;
+    
 
     //projectile vars
     [Header("References")]
@@ -54,9 +56,11 @@ public class SpikesPlacementManager : NetworkBehaviour
             state = 1;
         }
     }
-    private void placeSpike() {
-        RaycastHit hit;
 
+    private void placeSpike() {
+
+        if(!IsOwner) return;
+        
             if(Physics.Raycast(transform.position, transform.forward, out hit, 15f, 1 << LayerMask.NameToLayer("Ground")) && GameObject.Find(hit.collider.gameObject.name).tag != "SpawnPlatform") {
                 
                 if(hit.normal == Vector3.up){
@@ -75,18 +79,25 @@ public class SpikesPlacementManager : NetworkBehaviour
                         
                     }
                     if(check){
-                    
-                        GameObject newSpike = Instantiate(spikePrefabs[0], hit.point, Quaternion.identity);
-                        newSpike.name = "spike" + spikeID;
-                        spikeID++;
-                        spikes.Add(newSpike);
-
-                        // Debug.Log(hit.point);
+                        placeSpikeServerRpc();
                     }
                         
                 }
                 
             }
+    }
+
+
+    [ServerRpc]
+    private void placeSpikeServerRpc() {
+        if(!IsOwner) return;
+
+        //create spike client side
+        Debug.Log(hit.point);
+        GameObject newSpike = Instantiate(spikePrefabs[0], hit.point, Quaternion.identity);
+        newSpike.GetComponent<NetworkObject>().Spawn();
+                        
+        spikes.Add(newSpike);
     }
 
     private void breakSpike() {
@@ -96,6 +107,7 @@ public class SpikesPlacementManager : NetworkBehaviour
                 
                 if(spikes.Count != 0){
                     foundObject = GameObject.Find(hit.collider.gameObject.name);
+                    // foundObject.GetComponent<NetworkObject>().Despawn();
                     Destroy(foundObject);
                     spikes.Remove(foundObject);
 

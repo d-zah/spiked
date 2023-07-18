@@ -17,9 +17,11 @@ public class MouseLook : NetworkBehaviour
 
     public override void OnNetworkSpawn() {
         if(!IsOwner){
-            Destroy(this.gameObject);
-            // Destroy(this.GetComponent<Camera>());
-            // Destroy(this);
+            
+            //Destroy(this.gameObject);
+            this.GetComponent<Camera>().enabled = false;
+            this.GetComponent<AudioListener>().enabled = false;
+            this.enabled = false;
         } else {
             base.OnNetworkSpawn();
             Initialize();
