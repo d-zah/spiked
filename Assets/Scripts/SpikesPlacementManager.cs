@@ -11,11 +11,11 @@ public class SpikesPlacementManager : NetworkBehaviour
     [Header("Spikes")]
     public List<GameObject> spikePrefabs = new List<GameObject>(); 
     public List<GameObject> spikes = new List<GameObject>(); 
+    public List<string> spikeNames = new List<string>(); 
     public const float SPIKEX = 2.757577f;
     public const float SPIKEZ = 2.982507f;
-    public GameObject foundObject;
-    public int spikeID;
-    public RaycastHit hit;
+    public string foundName;
+    
     
 
     //projectile vars
@@ -41,6 +41,8 @@ public class SpikesPlacementManager : NetworkBehaviour
     {
         if(!IsOwner || !Application.isFocused) return;
 
+        
+
         if(Input.GetButton("Fire1")) {
             breakSpike();      
         } else if(Input.GetButton("Fire2")) {
@@ -60,67 +62,89 @@ public class SpikesPlacementManager : NetworkBehaviour
     private void placeSpike() {
 
         if(!IsOwner) return;
+        RaycastHit hit;
         
-            if(Physics.Raycast(transform.position, transform.forward, out hit, 15f, 1 << LayerMask.NameToLayer("Ground")) && GameObject.Find(hit.collider.gameObject.name).tag != "SpawnPlatform") {
+        if(!Physics.Raycast(transform.position, transform.forward, out hit, 15f, 1 << LayerMask.NameToLayer("Ground"))/* && GameObject.Find(hit.collider.gameObject.name).tag != "SpawnPlatform"*/) return;
                 
-                if(hit.normal == Vector3.up){
-                    bool check = true;
-                    foreach(GameObject spike in spikes){
-                        float xDiff = Mathf.Abs(spike.transform.position.x - hit.point.x);
-                        float zDiff = Mathf.Abs(spike.transform.position.z - hit.point.z);
-                        if(xDiff < 2 * SPIKEX && zDiff < SPIKEZ){
-                            check = false;
-                            break;
-                        }
-                        if(xDiff < SPIKEX && zDiff < 2 * SPIKEZ){
-                            check = false;
-                            break;
-                        }
-                        
-                    }
-                    if(check){
-                        placeSpikeServerRpc();
-                    }
-                        
+        if(!(hit.normal == Vector3.up)) return;
+        bool check = true;
+        foreach(GameObject gameObj in GameObject.FindObjectsOfType<GameObject>()){
+            if(gameObj.layer == 8){
+            
+                Debug.Log("Checking " + gameObj.name);
+                float xDiff = Mathf.Abs(gameObj.transform.position.x - hit.point.x);
+                float zDiff = Mathf.Abs(gameObj.transform.position.z - hit.point.z);
+                if(xDiff < 2 * SPIKEX && zDiff < SPIKEZ){
+                    check = false;
+                    break;
                 }
-                
+                if(xDiff < SPIKEX && zDiff < 2 * SPIKEZ){
+                    check = false;
+                    break;
+                }
             }
-    }
-
-
-    [ServerRpc]
-    private void placeSpikeServerRpc() {
-        if(!IsOwner) return;
-
-        //create spike client side
-        Debug.Log(hit.point);
-        GameObject newSpike = Instantiate(spikePrefabs[0], hit.point, Quaternion.identity);
-        newSpike.GetComponent<NetworkObject>().Spawn();
                         
-        spikes.Add(newSpike);
+        }
+        if(check) placeSpikeServerRpc(hit.point);
+            
+        
+            
     }
+
+
+    [ServerRpc(RequireOwnership = false)]
+    public void placeSpikeServerRpc(Vector3 hitPoint) {
+        // RaycastHit spikeHit = new RaycastHit();
+        // spikeHit.point = new Vector3(hitX, hitY, hitZ);
+
+        
+        //create spike client side
+        Debug.Log(hitPoint);
+        GameObject newSpike = Instantiate(spikePrefabs[0], hitPoint, Quaternion.identity);
+        var spikeID = new System.Random();
+        newSpike.name = "spike" + spikeID.Next(0, 1000000);
+        newSpike.GetComponent<NetworkObject>().Spawn();
+        
+        
+        string name = newSpike.name;
+        addSpikeClientRpc(name);
+                        
+        
+    }
+
+    [ClientRpc]
+    public void addSpikeClientRpc(string name) {
+        Debug.Log(name + " RPC");
+        spikeNames.Add(name);
+    }
+
 
     private void breakSpike() {
             RaycastHit hit;
 
             if(Physics.Raycast(transform.position, transform.forward, out hit, 15f, 1 << LayerMask.NameToLayer("Spikes"))) {
                 
-                if(spikes.Count != 0){
-                    foundObject = GameObject.Find(hit.collider.gameObject.name);
-                    // foundObject.GetComponent<NetworkObject>().Despawn();
-                    Destroy(foundObject);
-                    spikes.Remove(foundObject);
+                if(spikeNames.Count != 0){
+                    foundName = hit.collider.gameObject.name;
+                    breakSpikeServerRpc(foundName);
+                    spikeNames.Remove(foundName);
 
                 }       
             }
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void breakSpikeServerRpc(string foundName) {
+        GameObject foundObject = GameObject.Find(foundName);
+        foundObject.GetComponent<NetworkObject>().Despawn();
+        Destroy(foundObject);
+    }
+
     private void Throw(){
         readyToThrow = false;
 
         GameObject projectile = Instantiate(objectToThrow, attackPoint.position, cam.rotation);
-
         Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
-
         Vector3 forceToAdd = cam.transform.forward * throwForce + transform.up * throwUpwardForce;
 
         projectileRb.AddForce(forceToAdd, ForceMode.Impulse);
