@@ -10,11 +10,10 @@ public class SpikesPlacementManager : NetworkBehaviour
 
     [Header("Spikes")]
     public List<GameObject> spikePrefabs = new List<GameObject>(); 
-    public List<GameObject> spikes = new List<GameObject>(); 
-    public List<string> spikeNames = new List<string>(); 
+    public List<SpikesManager> spikeNames = new List<SpikesManager>(); 
     public const float SPIKEX = 2.757577f;
     public const float SPIKEZ = 2.982507f;
-    public string foundName;
+    public SpikesManager foundName;
     
     
 
@@ -71,7 +70,7 @@ public class SpikesPlacementManager : NetworkBehaviour
         foreach(GameObject gameObj in GameObject.FindObjectsOfType<GameObject>()){
             if(gameObj.layer == 8){
             
-                Debug.Log("Checking " + gameObj.name);
+                // Debug.Log("Checking " + gameObj.GetComponent<SpikesManager>().spikeID);
                 float xDiff = Mathf.Abs(gameObj.transform.position.x - hit.point.x);
                 float zDiff = Mathf.Abs(gameObj.transform.position.z - hit.point.z);
                 if(xDiff < 2 * SPIKEX && zDiff < SPIKEZ){
@@ -82,8 +81,7 @@ public class SpikesPlacementManager : NetworkBehaviour
                     check = false;
                     break;
                 }
-            }
-                        
+            }              
         }
         if(check) placeSpikeServerRpc(hit.point);
             
@@ -99,23 +97,34 @@ public class SpikesPlacementManager : NetworkBehaviour
 
         
         //create spike client side
-        Debug.Log(hitPoint);
+        // Debug.Log(hitPoint);
         GameObject newSpike = Instantiate(spikePrefabs[0], hitPoint, Quaternion.identity);
-        var spikeID = new System.Random();
-        newSpike.name = "spike" + spikeID.Next(0, 1000000);
         newSpike.GetComponent<NetworkObject>().Spawn();
         
         
-        string name = newSpike.name;
+        int name = newSpike.GetComponent<SpikesManager>().spikeID;
         addSpikeClientRpc(name);
                         
         
     }
 
     [ClientRpc]
-    public void addSpikeClientRpc(string name) {
-        Debug.Log(name + " RPC");
-        spikeNames.Add(name);
+    public void addSpikeClientRpc(int name) {
+        foreach(GameObject gameObj in GameObject.FindObjectsOfType<GameObject>()){
+            if(gameObj.layer == 8) {
+                SpikesManager currGameObj = gameObj.GetComponent<SpikesManager>();
+                if(currGameObj.spikeID == name) {
+                    addSpikeToList(currGameObj);
+                }      
+                return;  
+            }
+                  
+        }
+    }
+
+    private void addSpikeToList(SpikesManager spikeToAdd) {
+        Debug.Log(spikeToAdd.spikeID + " Adding to List");
+        spikeNames.Add(spikeToAdd);
     }
 
 
@@ -125,8 +134,9 @@ public class SpikesPlacementManager : NetworkBehaviour
             if(Physics.Raycast(transform.position, transform.forward, out hit, 15f, 1 << LayerMask.NameToLayer("Spikes"))) {
                 
                 if(spikeNames.Count != 0){
-                    foundName = hit.collider.gameObject.name;
-                    breakSpikeServerRpc(foundName);
+                    foundName = hit.collider.gameObject.GetComponent<SpikesManager>();
+                    Debug.Log(foundName.spikeID + " Found");
+                    breakSpikeServerRpc(foundName.spikeID);
                     spikeNames.Remove(foundName);
 
                 }       
@@ -134,10 +144,17 @@ public class SpikesPlacementManager : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void breakSpikeServerRpc(string foundName) {
-        GameObject foundObject = GameObject.Find(foundName);
-        foundObject.GetComponent<NetworkObject>().Despawn();
-        Destroy(foundObject);
+    public void breakSpikeServerRpc(int foundID) {
+        foreach(SpikesManager currentSpike in spikeNames) {
+            if (currentSpike.spikeID == foundID) {
+                Debug.Log(currentSpike.spikeID + " Has been Broken");
+                currentSpike.GetComponent<NetworkObject>().Despawn();
+                Destroy(currentSpike);
+                return;
+            }
+
+            
+        }
     }
 
     private void Throw(){
