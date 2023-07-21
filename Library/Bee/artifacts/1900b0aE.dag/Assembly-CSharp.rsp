@@ -386,6 +386,7 @@
 -analyzer:"D:/Utilities/2022.3.4f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"
 "Assets/ParrelSync/Examples/CustomArgumentExample.cs"
 "Assets/Scripts/ClientNetworkTransform.cs"
+"Assets/Scripts/GameManager.cs"
 "Assets/Scripts/MouseLook.cs"
 "Assets/Scripts/PlayerManager.cs"
 "Assets/Scripts/PlayerMovement.cs"
