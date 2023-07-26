@@ -387,6 +387,7 @@
 "Assets/ParrelSync/Examples/CustomArgumentExample.cs"
 "Assets/Scripts/ClientNetworkTransform.cs"
 "Assets/Scripts/GameManager.cs"
+"Assets/Scripts/MainMenu.cs"
 "Assets/Scripts/MouseLook.cs"
 "Assets/Scripts/PlayerManager.cs"
 "Assets/Scripts/PlayerMovement.cs"
