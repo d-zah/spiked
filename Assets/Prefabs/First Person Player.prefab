@@ -155,9 +155,7 @@ MonoBehaviour:
   state: 0
   spikePrefabs:
   - {fileID: 5732856679401311684, guid: d5cb0dd0a064b674aa1e822488e709d7, type: 3}
-  spikes: []
-  foundObject: {fileID: 0}
-  spikeID: 0
+  foundName: {fileID: 0}
   cam: {fileID: 4846338133456287814}
   attackPoint: {fileID: 1148122471304165812}
   objectToThrow: {fileID: 362157076532663442, guid: c72b7dd9207b64f4cbd3efb41d670366, type: 3}
@@ -165,6 +163,8 @@ MonoBehaviour:
   throwCooldown: 1
   throwForce: 70
   throwUpwardForce: 0
+  spikesIcon: {fileID: 21300000, guid: fd096a1d1c919b54eaee85d1178ea879, type: 3}
+  ballIcon: {fileID: 21300000, guid: 9df059b735643d4428331abf9375209b, type: 3}
 --- !u!1 &3697838576603074312
 GameObject:
   m_ObjectHideFlags: 0
@@ -339,7 +339,7 @@ Transform:
   - {fileID: 4846338133456287814}
   - {fileID: 1148122471304165812}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &5447020605036563465
 CharacterController:
@@ -391,6 +391,7 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 64
+  isInGame: 0
   consecutiveJumps: 0
 --- !u!114 &3093459279806106739
 MonoBehaviour:

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Unity.Netcode;
 
 public class SpikesPlacementManager : NetworkBehaviour
@@ -10,7 +11,6 @@ public class SpikesPlacementManager : NetworkBehaviour
 
     [Header("Spikes")]
     public List<GameObject> spikePrefabs = new List<GameObject>(); 
-    // public List<SpikesManager> spikeNames = new List<SpikesManager>(); 
     public const float SPIKEX = 2.757577f;
     public const float SPIKEZ = 2.982507f;
     public SpikesManager foundName;
@@ -35,6 +35,10 @@ public class SpikesPlacementManager : NetworkBehaviour
 
     bool readyToThrow = true;
 
+    [Header("UI Elements")]
+    public Sprite spikesIcon;
+    public Sprite ballIcon;
+
 
 
     // Update is called once per frame
@@ -47,16 +51,18 @@ public class SpikesPlacementManager : NetworkBehaviour
         if(Input.GetButton("Fire1")) {
             breakSpike();      
         } else if(Input.GetButton("Fire2")) {
-            if(state == 0) {
+            if(state == 1) {
                 placeSpike();
-            } else if (state == 1 && readyToThrow) {
+            } else if (state == 2 && readyToThrow) {
                 Throw();
             }
         }
-        if(Input.GetButton("Slot1")) {
-            state = 0;
-        } else if (Input.GetButton("Slot2")) {
+        if(Input.GetButton("Slot1")) { //select spikes
             state = 1;
+            GameObject.Find("CurrentIcon").GetComponent<Image>().sprite = spikesIcon;
+        } else if (Input.GetButton("Slot2")) { //select ball
+            state = 2;
+            GameObject.Find("CurrentIcon").GetComponent<Image>().sprite = ballIcon;
         }
     }
 
@@ -132,9 +138,7 @@ public class SpikesPlacementManager : NetworkBehaviour
         foreach(GameObject gameObj in GameObject.FindObjectsOfType<GameObject>()){
             if(gameObj.layer == 8) {
                 SpikesManager currentManager = gameObj.GetComponent<SpikesManager>();
-                Debug.Log(currentManager.spikeID + " " + foundID);
                 if (currentManager.spikeID == foundID) {
-                    Debug.Log(currentManager.spikeID + " Has been Broken");
                     gameObj.GetComponent<NetworkObject>().Despawn();
                     Destroy(gameObj);
                     return;
@@ -146,13 +150,22 @@ public class SpikesPlacementManager : NetworkBehaviour
     private void Throw(){
         readyToThrow = false;
 
+        ThrowBallServerRpc();
+
+        Invoke(nameof(ResetThrow), throwCooldown);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ThrowBallServerRpc(){
+
         GameObject projectile = Instantiate(objectToThrow, attackPoint.position, cam.rotation);
+        projectile.GetComponent<NetworkObject>().Spawn();
         Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
         Vector3 forceToAdd = cam.transform.forward * throwForce + transform.up * throwUpwardForce;
 
         projectileRb.AddForce(forceToAdd, ForceMode.Impulse);
-
-        Invoke(nameof(ResetThrow), throwCooldown);
+               
+        
     }
 
     private void ResetThrow() {

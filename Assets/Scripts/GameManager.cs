@@ -27,14 +27,15 @@ public class GameManager : NetworkBehaviour
                 if(gameObj.tag == "Player"){
                     //Game Start
                     gameObj.GetComponent<PlayerMovement>().isInGame = true;
-                    GameObject go = GameObject.Find("WaitingText");
-                    if (go) {
-                        Debug.Log(go.name);
-                    } else {
-                        Debug.Log("there is no go");
-                    }
+                    gameObj.transform.GetChild(3).GetComponent<SpikesPlacementManager>().state = 1;
                 }
             }
+            
+            GameObject go = GameObject.Find("WaitingText");
+            if(go) {
+                go.SetActive(false);
+            }
+            GameObject.FindObjectOfType<Canvas>(true).gameObject.SetActive(true);
         }
         
     }
