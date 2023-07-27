@@ -42,7 +42,7 @@ public class SpikesPlacementManager : NetworkBehaviour
     {
         if(!IsOwner || !Application.isFocused) return;
 
-        
+        if(!transform.parent.gameObject.GetComponent<PlayerMovement>().isInGame) return;
 
         if(Input.GetButton("Fire1")) {
             breakSpike();      

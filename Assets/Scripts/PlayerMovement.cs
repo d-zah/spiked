@@ -20,10 +20,15 @@ public class PlayerMovement : NetworkBehaviour
     public LayerMask groundMask;
 
     Vector3 velocity;
+    public bool isInGame;
     bool isGrounded;
     bool isSprinting;
     [SerializeField] private int consecutiveJumps = 0;
 
+    void Start(){
+        isInGame = false;
+        GameObject.Find("GameManager").GetComponent<GameManager>().checkForGame();
+    }
 
     // Update is called once per frame
     void Update()
