@@ -21,6 +21,7 @@ public class PlayerMovement : NetworkBehaviour
 
     Vector3 velocity;
     public bool isInGame;
+    public int team = 0; //0 = spec, 1 = Purple, 2 = Yellow
     bool isGrounded;
     bool isSprinting;
     [SerializeField] private int consecutiveJumps = 0;

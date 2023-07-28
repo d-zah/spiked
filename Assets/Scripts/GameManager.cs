@@ -23,12 +23,20 @@ public class GameManager : NetworkBehaviour
             }
         }
         if(players == 2) {
+            //Game Start
+            bool alreadyAssignedPurple = false;
             foreach(GameObject gameObj in GameObject.FindObjectsOfType<GameObject>()){
                 if(gameObj.tag == "Player"){
-                    //Game Start
+                    if(alreadyAssignedPurple){
+                        gameObj.GetComponent<PlayerMovement>().team = 2;
+                    } else {
+                        gameObj.GetComponent<PlayerMovement>().team = 1;
+                        alreadyAssignedPurple = true;
+                    }
                     gameObj.GetComponent<PlayerMovement>().isInGame = true;
                     gameObj.transform.GetChild(3).GetComponent<SpikesPlacementManager>().state = 1;
                 }
+                
             }
             
             GameObject go = GameObject.Find("WaitingText");
