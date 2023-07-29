@@ -39,6 +39,10 @@ public class SpikesPlacementManager : NetworkBehaviour
     public Sprite spikesIcon;
     public Sprite ballIcon;
 
+    void Start(){
+        Vector3 initialSpike = new Vector3(100f, 0f, 0f);
+        placeSpikeServerRpc(initialSpike);
+    }
 
     // Update is called once per frame
     void Update()
