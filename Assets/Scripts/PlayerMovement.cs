@@ -21,7 +21,9 @@ public class PlayerMovement : NetworkBehaviour
 
     Vector3 velocity;
     public bool isInGame;
+    public bool isInPreGame = false;
     public int team = 0; //0 = spec, 1 = Purple, 2 = Yellow
+    
     bool isGrounded;
     bool isSprinting;
     [SerializeField] private int consecutiveJumps = 0;
@@ -34,7 +36,7 @@ public class PlayerMovement : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!IsOwner || !Application.isFocused) return;
+        if(!IsOwner || !Application.isFocused || isInPreGame) return;
 
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
@@ -95,8 +97,25 @@ public class PlayerMovement : NetworkBehaviour
         speed = walkingSpeed;
         consecutiveJumps = 0;
         controller.enabled = false; //have to disable controller in order to adjust position
-        playerTransform.position = new Vector3(-74f, 3f, 0f);
-        transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
+        if(team == 1) {
+            playerTransform.position = new Vector3(74f, 3f, 0f);
+            transform.localRotation = Quaternion.Euler(0f, -90f, 0f);
+        } else if(team == 2) {
+            playerTransform.position = new Vector3(-74f, 3f, 0f);
+            transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
+        } else {
+            playerTransform.position = new Vector3(-5f, 3f, 0f);
+            transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
+        }
+        
         controller.enabled = true;  
+    }
+
+    void disablePreGame(){
+        isInPreGame = false;
+    }
+
+    void invokePreGame(){
+        Invoke(nameof(disablePreGame), 3f);
     }
 }

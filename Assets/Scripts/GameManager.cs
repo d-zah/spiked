@@ -26,15 +26,18 @@ public class GameManager : NetworkBehaviour
             //Game Start
             bool alreadyAssignedPurple = false;
             foreach(GameObject gameObj in GameObject.FindObjectsOfType<GameObject>()){
-                if(gameObj.tag == "Player"){
+                if(gameObj.tag == "Player"){ //assign to both players
                     if(alreadyAssignedPurple){
                         gameObj.GetComponent<PlayerMovement>().team = 2;
                     } else {
                         gameObj.GetComponent<PlayerMovement>().team = 1;
                         alreadyAssignedPurple = true;
                     }
-                    gameObj.GetComponent<PlayerMovement>().isInGame = true;
-                    gameObj.transform.GetChild(3).GetComponent<SpikesPlacementManager>().state = 1;
+                    gameObj.GetComponent<PlayerMovement>().isInGame = true; //in game
+                    gameObj.transform.GetChild(3).GetComponent<SpikesPlacementManager>().state = 1; //set to spike state
+                    gameObj.SendMessage("resetPosition");
+                    gameObj.GetComponent<PlayerMovement>().isInPreGame = true;
+                    gameObj.SendMessage("invokePreGame");
                 }
                 
             }
@@ -46,5 +49,15 @@ public class GameManager : NetworkBehaviour
             GameObject.FindObjectOfType<Canvas>(true).gameObject.SetActive(true);
         }
         
+    }
+
+    public void resetRound(){
+        foreach(GameObject gameObj in GameObject.FindObjectsOfType<GameObject>()){
+            if(gameObj.tag == "Player"){ //assign to both players
+                gameObj.SendMessage("resetPosition");
+                gameObj.GetComponent<PlayerMovement>().isInPreGame = true;
+                gameObj.SendMessage("invokePreGame");
+            }     
+        }
     }
 }

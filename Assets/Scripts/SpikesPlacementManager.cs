@@ -14,8 +14,8 @@ public class SpikesPlacementManager : NetworkBehaviour
     public const float SPIKEX = 2.757577f;
     public const float SPIKEZ = 2.982507f;
     public SpikesManager foundName;
-    private int lastPlacedSpike = 0;
-    private bool placedLast = true;
+    private int lastPlacedSpike;
+    private bool readyForPlace = true;
     
     
 
@@ -38,7 +38,6 @@ public class SpikesPlacementManager : NetworkBehaviour
     [Header("UI Elements")]
     public Sprite spikesIcon;
     public Sprite ballIcon;
-
 
 
     // Update is called once per frame
@@ -89,7 +88,7 @@ public class SpikesPlacementManager : NetworkBehaviour
                     check = false;
                     break;
                 }
-                if(lastPlacedSpike == GameObject.Find("GameManager").GetComponent<GameManager>().highestSpikeID && placedLast){
+                if(lastPlacedSpike == GameObject.Find("GameManager").GetComponent<GameManager>().highestSpikeID && !readyForPlace){
                     check = false;
                     break;
                 }
@@ -98,7 +97,8 @@ public class SpikesPlacementManager : NetworkBehaviour
         if(check) {
             lastPlacedSpike = GameObject.Find("GameManager").GetComponent<GameManager>().highestSpikeID;
             placeSpikeServerRpc(hit.point);
-            placedLast = true;
+            Debug.Log("false");
+            readyForPlace = false;
         }
         
     }
@@ -113,11 +113,14 @@ public class SpikesPlacementManager : NetworkBehaviour
         
         int name = newSpike.GetComponent<SpikesManager>().spikeID;
 
+        resetReadinessClientRpc();
+
     }
 
     [ClientRpc]
-    public void resetLastPlacedClientRpc() {
-        placedLast = false;
+    public void resetReadinessClientRpc() {
+        Debug.Log("true");
+        readyForPlace = true;
     }
 
 

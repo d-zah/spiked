@@ -392,10 +392,12 @@
 "Assets/Scripts/PlayerManager.cs"
 "Assets/Scripts/PlayerMovement.cs"
 "Assets/Scripts/ProjectileManager.cs"
+"Assets/Scripts/PurpleGoalCheck.cs"
 "Assets/Scripts/SpikesManager.cs"
 "Assets/Scripts/SpikesPlacementManager.cs"
 "Assets/Scripts/StartNetwork.cs"
 "Assets/Scripts/VoidManager.cs"
+"Assets/Scripts/YellowGoalCheck.cs"
 -langversion:9.0
 
 /deterministic
