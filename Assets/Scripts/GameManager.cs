@@ -10,6 +10,7 @@ public class GameManager : NetworkBehaviour
     public int highestSpikeID;
     public int purpleScore;
     public int yellowScore;
+    public Sprite purple0, purple1, purple2, purple3, yellow0, yellow1, yellow2, yellow3;
 
     void Start() {
         highestSpikeID = 0;
@@ -67,6 +68,11 @@ public class GameManager : NetworkBehaviour
                 Destroy(gameObj);
             }     
         }
+        if(winner == 2){
+            yellowScore++;
+        } else {
+            purpleScore++;
+        }
         foreach(GameObject gameObj in GameObject.FindObjectsOfType<GameObject>()){
             if(gameObj.tag == "Player"){ //assign to both players
                 gameObj.SendMessage("resetPosition");
@@ -75,15 +81,15 @@ public class GameManager : NetworkBehaviour
                 gameObj.transform.GetChild(3).GetComponent<SpikesPlacementManager>().placeDebugSpike();
                 if(winner == 2){
                     TMP_Text textElement = GameObject.Find("WinnerText").GetComponent<TMP_Text>();
-                    yellowScore++;
-                    textElement.color = new Color(255, 255, 0, 255);
+                    textElement.color = Color.yellow;
                     textElement.text = "Yellow Scored!";
+                    GameObject.Find("YellowScoreboard").GetComponent<Image>().sprite = (Sprite)this.GetType().GetField("yellow" + yellowScore).GetValue(this);
                     Invoke(nameof(resetWinnerText), 3f);
                 } else {
                     TMP_Text textElement = GameObject.Find("WinnerText").GetComponent<TMP_Text>();
-                    purpleScore++;
-                    textElement.color = new Color(130, 0, 190, 255);
+                    textElement.color = Color.magenta;
                     textElement.text = "Purple Scored!";
+                    GameObject.Find("PurpleScoreboard").GetComponent<Image>().sprite = (Sprite)this.GetType().GetField("purple" + purpleScore).GetValue(this);
                     Invoke(nameof(resetWinnerText), 3f);
                 }
             }     
