@@ -60,13 +60,13 @@ public class SpikesPlacementManager : NetworkBehaviour
                 Throw();
             }
         }
-        if(Input.GetButton("Slot1")) { //select spikes
-            state = 1;
-            GameObject.Find("CurrentIcon").GetComponent<Image>().sprite = spikesIcon;
-        } else if (Input.GetButton("Slot2")) { //select ball
-            state = 2;
-            GameObject.Find("CurrentIcon").GetComponent<Image>().sprite = ballIcon;
-        }
+        // if(Input.GetButton("Slot1")) { //select spikes
+        //     state = 1;
+        //     GameObject.Find("CurrentIcon").GetComponent<Image>().sprite = spikesIcon;
+        // } else if (Input.GetButton("Slot2")) { //select ball
+        //     state = 2;
+        //     GameObject.Find("CurrentIcon").GetComponent<Image>().sprite = ballIcon;
+        // }
     }
 
     private void placeSpike() {
@@ -81,7 +81,6 @@ public class SpikesPlacementManager : NetworkBehaviour
         foreach(GameObject gameObj in GameObject.FindObjectsOfType<GameObject>()){
             if(gameObj.layer == 8){
             
-                // Debug.Log("Checking " + gameObj.GetComponent<SpikesManager>().spikeID);
                 float xDiff = Mathf.Abs(gameObj.transform.position.x - hit.point.x);
                 float zDiff = Mathf.Abs(gameObj.transform.position.z - hit.point.z);
                 if(xDiff < 2 * SPIKEX && zDiff < SPIKEZ){
@@ -101,7 +100,6 @@ public class SpikesPlacementManager : NetworkBehaviour
         if(check) {
             lastPlacedSpike = GameObject.Find("GameManager").GetComponent<GameManager>().highestSpikeID;
             placeSpikeServerRpc(hit.point);
-            Debug.Log("false");
             readyForPlace = false;
         }
         
@@ -123,7 +121,6 @@ public class SpikesPlacementManager : NetworkBehaviour
 
     [ClientRpc]
     public void resetReadinessClientRpc() {
-        Debug.Log("true");
         readyForPlace = true;
     }
 
@@ -134,7 +131,6 @@ public class SpikesPlacementManager : NetworkBehaviour
             if(Physics.Raycast(transform.position, transform.forward, out hit, 15f, 1 << LayerMask.NameToLayer("Spikes"))) {
                 
                 foundName = hit.collider.gameObject.GetComponent<SpikesManager>();
-                Debug.Log(foundName.spikeID + " Found");
                 breakSpikeServerRpc(foundName.spikeID);
      
             }

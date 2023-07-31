@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using UnityEngine.UI;
+using TMPro;
 
 public class PlayerMovement : NetworkBehaviour
 {
@@ -18,6 +20,7 @@ public class PlayerMovement : NetworkBehaviour
     public Transform groundCheck;
     public Transform playerTransform;
     public LayerMask groundMask;
+    public TMP_Text textElement;
 
     Vector3 velocity;
     public bool isInGame;
@@ -29,6 +32,7 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] private int consecutiveJumps = 0;
 
     void Start(){
+        
         isInGame = false;
         GameObject.Find("GameManager").GetComponent<GameManager>().checkForGame();
     }
@@ -111,11 +115,33 @@ public class PlayerMovement : NetworkBehaviour
         controller.enabled = true;  
     }
 
-    void disablePreGame(){
-        isInPreGame = false;
-    }
+    
 
     void invokePreGame(){
+        if(!textElement){
+            textElement = GameObject.Find("Countdown").GetComponent<TMP_Text>();
+        }
+        textElement.text = "3";
+        Invoke(nameof(countdown2), 1.0f);
+        Invoke(nameof(countdown1), 2.0f);
         Invoke(nameof(disablePreGame), 3f);
+        Invoke(nameof(resetCountdown), 4.0f);
+    }
+
+    void countdown2(){
+        textElement.text = "2";
+    }
+
+    void countdown1(){
+        textElement.text = "1";
+    }
+
+    void disablePreGame(){
+        isInPreGame = false;
+        textElement.text = "Go!";
+    }
+
+    void resetCountdown(){
+        textElement.text = "";
     }
 }

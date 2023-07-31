@@ -25,6 +25,9 @@ public class GameManager : NetworkBehaviour
         if(players == 2) {
             //Game Start
             bool alreadyAssignedPurple = false;
+
+            GameObject.FindObjectOfType<Canvas>(true).gameObject.SetActive(true);
+            
             foreach(GameObject gameObj in GameObject.FindObjectsOfType<GameObject>()){
                 if(gameObj.tag == "Player"){ //assign to both players
                     if(alreadyAssignedPurple){
@@ -46,7 +49,7 @@ public class GameManager : NetworkBehaviour
             if(go) {
                 go.SetActive(false);
             }
-            GameObject.FindObjectOfType<Canvas>(true).gameObject.SetActive(true);
+            
         }
         
     }

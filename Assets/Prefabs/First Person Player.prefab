@@ -391,7 +391,11 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 64
+  textObject: {fileID: 0}
+  textElement: {fileID: 0}
   isInGame: 0
+  isInPreGame: 0
+  team: 0
   consecutiveJumps: 0
 --- !u!114 &3093459279806106739
 MonoBehaviour:
