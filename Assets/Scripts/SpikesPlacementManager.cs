@@ -40,6 +40,12 @@ public class SpikesPlacementManager : NetworkBehaviour
     public Sprite ballIcon;
 
     void Start(){
+        placeDebugSpike();
+    }
+
+    public void placeDebugSpike(){
+        if(!IsOwner) return;
+
         Vector3 initialSpike = new Vector3(100f, 0f, 0f);
         placeSpikeServerRpc(initialSpike);
     }

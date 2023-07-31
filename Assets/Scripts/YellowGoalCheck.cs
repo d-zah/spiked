@@ -24,6 +24,6 @@ public class YellowGoalCheck : NetworkBehaviour
 
     [ClientRpc]
     void resetRoundClientRpc(){
-        gameManager.resetRound();
+        gameManager.resetRound(2);
     }
 }
