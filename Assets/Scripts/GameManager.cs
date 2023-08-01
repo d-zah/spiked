@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Unity.Netcode;
 using UnityEngine.UI;
 using TMPro;
@@ -69,29 +70,40 @@ public class GameManager : NetworkBehaviour
             }     
         }
         if(winner == 2){
+            TMP_Text textElement = GameObject.Find("WinnerText").GetComponent<TMP_Text>();
+            textElement.color = Color.yellow;
             yellowScore++;
+            if(yellowScore == 3){
+                textElement.text = "Yellow Wins!";
+            } else {
+                textElement.text = "Yellow Scored!";
+            }
+            GameObject.Find("YellowScoreboard").GetComponent<Image>().sprite = (Sprite)this.GetType().GetField("yellow" + yellowScore).GetValue(this);
+            Invoke(nameof(resetWinnerText), 3f);
         } else {
+            TMP_Text textElement = GameObject.Find("WinnerText").GetComponent<TMP_Text>();
+            textElement.color = Color.magenta;
             purpleScore++;
+            if(purpleScore == 3){
+                textElement.text = "Purple Wins!";
+            } else {
+                textElement.text = "Purple Scored!";
+            }
+            GameObject.Find("PurpleScoreboard").GetComponent<Image>().sprite = (Sprite)this.GetType().GetField("purple" + purpleScore).GetValue(this);
+            Invoke(nameof(resetWinnerText), 3f);
         }
         foreach(GameObject gameObj in GameObject.FindObjectsOfType<GameObject>()){
             if(gameObj.tag == "Player"){ //assign to both players
                 gameObj.SendMessage("resetPosition");
                 gameObj.GetComponent<PlayerMovement>().isInPreGame = true;
-                gameObj.SendMessage("invokePreGame");
-                gameObj.transform.GetChild(3).GetComponent<SpikesPlacementManager>().placeDebugSpike();
-                if(winner == 2){
-                    TMP_Text textElement = GameObject.Find("WinnerText").GetComponent<TMP_Text>();
-                    textElement.color = Color.yellow;
-                    textElement.text = "Yellow Scored!";
-                    GameObject.Find("YellowScoreboard").GetComponent<Image>().sprite = (Sprite)this.GetType().GetField("yellow" + yellowScore).GetValue(this);
-                    Invoke(nameof(resetWinnerText), 3f);
+                if(purpleScore == 3 || yellowScore == 3){
+                    Invoke(nameof(sendMenuServerRpc), 3.5f);
                 } else {
-                    TMP_Text textElement = GameObject.Find("WinnerText").GetComponent<TMP_Text>();
-                    textElement.color = Color.magenta;
-                    textElement.text = "Purple Scored!";
-                    GameObject.Find("PurpleScoreboard").GetComponent<Image>().sprite = (Sprite)this.GetType().GetField("purple" + purpleScore).GetValue(this);
-                    Invoke(nameof(resetWinnerText), 3f);
+                    gameObj.SendMessage("invokePreGame");
+                    gameObj.transform.GetChild(3).GetComponent<SpikesPlacementManager>().placeDebugSpike();
                 }
+                
+                
             }     
         }
         
@@ -101,4 +113,22 @@ public class GameManager : NetworkBehaviour
     public void resetWinnerText(){
         GameObject.Find("WinnerText").GetComponent<TMP_Text>().text = "";
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void sendMenuServerRpc(){
+        foreach(GameObject gameObj in GameObject.FindObjectsOfType<GameObject>()){
+            if(gameObj.tag == "Player"){ //assign to both players
+                
+                Destroy(gameObj);
+            }
+        }
+        sendMenuClientRpc();
+    }
+
+    [ClientRpc]
+    public void sendMenuClientRpc(){
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+    }
+
+
 }
