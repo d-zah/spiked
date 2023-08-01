@@ -155,6 +155,26 @@ MonoBehaviour:
   state: 0
   spikePrefabs:
   - {fileID: 5732856679401311684, guid: d5cb0dd0a064b674aa1e822488e709d7, type: 3}
+  spikePlaceSounds:
+  - {fileID: 8300000, guid: d224474b879724843a947f22aa227600, type: 3}
+  - {fileID: 8300000, guid: 4dd754d6c4f363941b87c2c21da77344, type: 3}
+  - {fileID: 8300000, guid: 9fd8e29d28b292644954010612925f0c, type: 3}
+  - {fileID: 8300000, guid: 566d4c374df0e9e4babeea6783d083b3, type: 3}
+  - {fileID: 8300000, guid: 5c493868da402a64bb73d4e97477b44b, type: 3}
+  - {fileID: 8300000, guid: 5aa8ac055173ac249837aee4e27117cf, type: 3}
+  - {fileID: 8300000, guid: 123d4378b516d134ca1dcfd4f90ef727, type: 3}
+  - {fileID: 8300000, guid: 1d7703874c8313f45b66e2cb8587d7a0, type: 3}
+  - {fileID: 8300000, guid: 9dede4c397a4dc44b8995fdd39277d48, type: 3}
+  spikeBreakSounds:
+  - {fileID: 8300000, guid: 3299069c3d20d7d4ab2c6dfd252ddcdf, type: 3}
+  - {fileID: 8300000, guid: ad7c38a494ee2ea47bad2cc160e10ba6, type: 3}
+  - {fileID: 8300000, guid: 2b153fc9361a11c498bbd1fb402db7b5, type: 3}
+  - {fileID: 8300000, guid: 29f37704c4056a74c9c9e549349bb83e, type: 3}
+  - {fileID: 8300000, guid: 42912563ee8e37348a4978290201e336, type: 3}
+  - {fileID: 8300000, guid: 50edd477f6d01504f8fcf6f93086e5cb, type: 3}
+  - {fileID: 8300000, guid: d5da9caeb6c2839458abcc8db38b2801, type: 3}
+  - {fileID: 8300000, guid: df5787c9d3e01944faa3972c2276cf5d, type: 3}
+  - {fileID: 8300000, guid: 11c018fee12c98b43b04e5e367987ec3, type: 3}
   foundName: {fileID: 0}
   cam: {fileID: 4846338133456287814}
   attackPoint: {fileID: 1148122471304165812}
@@ -391,11 +411,9 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 64
-  textObject: {fileID: 0}
   textElement: {fileID: 0}
   isInGame: 0
   isInPreGame: 0
-  team: 0
   consecutiveJumps: 0
 --- !u!114 &3093459279806106739
 MonoBehaviour:

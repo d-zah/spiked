@@ -11,13 +11,14 @@ public class SpikesPlacementManager : NetworkBehaviour
 
     [Header("Spikes")]
     public List<GameObject> spikePrefabs = new List<GameObject>(); 
+    public List<AudioClip> spikePlaceSounds = new List<AudioClip>();
+    public List<AudioClip> spikeBreakSounds = new List<AudioClip>();
     public const float SPIKEX = 2.757577f;
     public const float SPIKEZ = 2.982507f;
     public SpikesManager foundName;
     private int lastPlacedSpike;
     private bool readyForPlace = true;
-    
-    
+
 
     //projectile vars
     [Header("References")]
@@ -119,6 +120,9 @@ public class SpikesPlacementManager : NetworkBehaviour
         GameObject newSpike = Instantiate(spikePrefabs[0], hitPoint, Quaternion.identity);
         newSpike.GetComponent<NetworkObject>().Spawn();
         
+        int index = Random.Range(0, spikePlaceSounds.Count);
+        newSpike.GetComponent<AudioSource>().PlayOneShot(spikePlaceSounds[index], 0.5f);
+        
         int name = newSpike.GetComponent<SpikesManager>().spikeID;
 
         resetReadinessClientRpc();
@@ -148,6 +152,9 @@ public class SpikesPlacementManager : NetworkBehaviour
             if(gameObj.layer == 8) {
                 SpikesManager currentManager = gameObj.GetComponent<SpikesManager>();
                 if (currentManager.spikeID == foundID) {
+                    
+                    int index = Random.Range(0, spikeBreakSounds.Count);
+                    AudioSource.PlayClipAtPoint(spikeBreakSounds[index], gameObj.transform.position, 0.5f);
                     gameObj.GetComponent<NetworkObject>().Despawn();
                     Destroy(gameObj);
                     return;

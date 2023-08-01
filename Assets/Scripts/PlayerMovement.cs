@@ -25,14 +25,13 @@ public class PlayerMovement : NetworkBehaviour
     Vector3 velocity;
     public bool isInGame;
     public bool isInPreGame = false;
-    public int team = 0; //0 = spec, 1 = Purple, 2 = Yellow
+    public PlayerTeam? team = null; 
     
     bool isGrounded;
     bool isSprinting;
     [SerializeField] private int consecutiveJumps = 0;
 
     void Start(){
-        
         isInGame = false;
         GameObject.Find("GameManager").GetComponent<GameManager>().checkForGame();
     }
@@ -101,15 +100,19 @@ public class PlayerMovement : NetworkBehaviour
         speed = walkingSpeed;
         consecutiveJumps = 0;
         controller.enabled = false; //have to disable controller in order to adjust position
-        if(team == 1) {
-            playerTransform.position = new Vector3(74f, 3f, 0f);
-            transform.localRotation = Quaternion.Euler(0f, -90f, 0f);
-        } else if(team == 2) {
-            playerTransform.position = new Vector3(-74f, 3f, 0f);
-            transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
-        } else {
-            playerTransform.position = new Vector3(-5f, 3f, 0f);
-            transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
+        switch(team){
+            case PlayerTeam.PURPLE: //1
+                playerTransform.position = new Vector3(74f, 3f, 0f);
+                transform.localRotation = Quaternion.Euler(0f, -90f, 0f);
+                break;
+            case PlayerTeam.YELLOW: //2
+                playerTransform.position = new Vector3(-74f, 3f, 0f);
+                transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
+                break;
+            case null: //0
+                playerTransform.position = new Vector3(-5f, 3f, 0f);
+                transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
+                break;   
         }
         
         controller.enabled = true;  

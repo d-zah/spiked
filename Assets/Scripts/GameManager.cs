@@ -37,9 +37,9 @@ public class GameManager : NetworkBehaviour
             foreach(GameObject gameObj in GameObject.FindObjectsOfType<GameObject>()){
                 if(gameObj.tag == "Player"){ //assign to both players
                     if(alreadyAssignedPurple){
-                        gameObj.GetComponent<PlayerMovement>().team = 2;
+                        gameObj.GetComponent<PlayerMovement>().team = PlayerTeam.YELLOW;
                     } else {
-                        gameObj.GetComponent<PlayerMovement>().team = 1;
+                        gameObj.GetComponent<PlayerMovement>().team = PlayerTeam.PURPLE;
                         alreadyAssignedPurple = true;
                     }
                     gameObj.GetComponent<PlayerMovement>().isInGame = true; //in game
@@ -60,16 +60,17 @@ public class GameManager : NetworkBehaviour
         
     }
 
-    public void resetRound(int winner){
+    public void resetRound(PlayerTeam winner){
         foreach(GameObject gameObj in GameObject.FindObjectsOfType<GameObject>()){
-            if(gameObj.layer == 8) {
+            if(gameObj.layer == 8) {//spike layer
                 if(IsServer){
                     gameObj.GetComponent<NetworkObject>().Despawn();
                 }
                 Destroy(gameObj);
             }     
         }
-        if(winner == 2){
+
+        if(winner == PlayerTeam.YELLOW){
             TMP_Text textElement = GameObject.Find("WinnerText").GetComponent<TMP_Text>();
             textElement.color = Color.yellow;
             yellowScore++;
@@ -80,7 +81,7 @@ public class GameManager : NetworkBehaviour
             }
             GameObject.Find("YellowScoreboard").GetComponent<Image>().sprite = (Sprite)this.GetType().GetField("yellow" + yellowScore).GetValue(this);
             Invoke(nameof(resetWinnerText), 3f);
-        } else {
+        } else if(winner == PlayerTeam.PURPLE) {
             TMP_Text textElement = GameObject.Find("WinnerText").GetComponent<TMP_Text>();
             textElement.color = Color.magenta;
             purpleScore++;
@@ -92,6 +93,7 @@ public class GameManager : NetworkBehaviour
             GameObject.Find("PurpleScoreboard").GetComponent<Image>().sprite = (Sprite)this.GetType().GetField("purple" + purpleScore).GetValue(this);
             Invoke(nameof(resetWinnerText), 3f);
         }
+
         foreach(GameObject gameObj in GameObject.FindObjectsOfType<GameObject>()){
             if(gameObj.tag == "Player"){ //assign to both players
                 gameObj.SendMessage("resetPosition");
@@ -119,7 +121,7 @@ public class GameManager : NetworkBehaviour
         foreach(GameObject gameObj in GameObject.FindObjectsOfType<GameObject>()){
             if(gameObj.tag == "Player"){ //assign to both players
                 
-                Destroy(gameObj);
+                Destroy(NetworkManager.Singleton.gameObject);
             }
         }
         sendMenuClientRpc();
@@ -127,7 +129,10 @@ public class GameManager : NetworkBehaviour
 
     [ClientRpc]
     public void sendMenuClientRpc(){
+        NetworkManager.Singleton.Shutdown();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+        Debug.Log("after LoadScene");
+        Cursor.lockState = CursorLockMode.None;
     }
 
 
