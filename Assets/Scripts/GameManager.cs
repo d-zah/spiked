@@ -43,9 +43,9 @@ public class GameManager : NetworkBehaviour
                         alreadyAssignedPurple = true;
                     }
                     gameObj.GetComponent<PlayerMovement>().isInGame = true; //in game
+                    gameObj.GetComponent<PlayerMovement>().isInPreGame = true;
                     gameObj.transform.GetChild(3).GetComponent<SpikesPlacementManager>().state = 1; //set to spike state
                     gameObj.SendMessage("resetPosition");
-                    gameObj.GetComponent<PlayerMovement>().isInPreGame = true;
                     gameObj.SendMessage("invokePreGame");
                 }
                 
@@ -96,8 +96,8 @@ public class GameManager : NetworkBehaviour
 
         foreach(GameObject gameObj in GameObject.FindObjectsOfType<GameObject>()){
             if(gameObj.tag == "Player"){ //assign to both players
-                gameObj.SendMessage("resetPosition");
                 gameObj.GetComponent<PlayerMovement>().isInPreGame = true;
+                gameObj.SendMessage("resetPosition");
                 if(purpleScore == 3 || yellowScore == 3){
                     Invoke(nameof(sendMenuServerRpc), 3.5f);
                 } else {
@@ -131,7 +131,6 @@ public class GameManager : NetworkBehaviour
     public void sendMenuClientRpc(){
         NetworkManager.Singleton.Shutdown();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
-        Debug.Log("after LoadScene");
         Cursor.lockState = CursorLockMode.None;
     }
 

@@ -20,21 +20,21 @@ public class SpikesPlacementManager : NetworkBehaviour
     private bool readyForPlace = true;
 
 
-    //projectile vars
-    [Header("References")]
-    public Transform cam;
-    public Transform attackPoint;
-    public GameObject objectToThrow;
+    // //projectile vars
+    // [Header("References")]
+    // public Transform cam;
+    // public Transform attackPoint;
+    // public GameObject objectToThrow;
 
-    [Header("Settings")]
-    public int totalThrows;
-    public float throwCooldown;
+    // [Header("Settings")]
+    // public int totalThrows;
+    // public float throwCooldown;
 
-    [Header("Throwing")]
-    public float throwForce;
-    public float throwUpwardForce;
+    // [Header("Throwing")]
+    // public float throwForce;
+    // public float throwUpwardForce;
 
-    bool readyToThrow = true;
+    // bool readyToThrow = true;
 
     [Header("UI Elements")]
     public Sprite spikesIcon;
@@ -47,7 +47,7 @@ public class SpikesPlacementManager : NetworkBehaviour
     public void placeDebugSpike(){
         if(!IsOwner) return;
 
-        Vector3 initialSpike = new Vector3(100f, 0f, 0f);
+        Vector3 initialSpike = new Vector3(0f, 500f, 0f);
         placeSpikeServerRpc(initialSpike);
     }
 
@@ -63,9 +63,9 @@ public class SpikesPlacementManager : NetworkBehaviour
         } else if(Input.GetButton("Fire2")) {
             if(state == 1) {
                 placeSpike();
-            } else if (state == 2 && readyToThrow) {
-                Throw();
-            }
+            } // else if (state == 2 && readyToThrow) {
+            //     Throw();
+            // }
         }
         // if(Input.GetButton("Slot1")) { //select spikes
         //     state = 1;
@@ -99,6 +99,10 @@ public class SpikesPlacementManager : NetworkBehaviour
                     break;
                 }
                 if(lastPlacedSpike == GameObject.Find("GameManager").GetComponent<GameManager>().highestSpikeID && !readyForPlace){
+                    check = false;
+                    break;
+                }
+                if(GameObject.Find(hit.collider.gameObject.name).tag == "SpawnPlatform"){
                     check = false;
                     break;
                 }
@@ -163,30 +167,30 @@ public class SpikesPlacementManager : NetworkBehaviour
         }
     }
 
-    private void Throw(){
-        readyToThrow = false;
+    // private void Throw(){
+    //     readyToThrow = false;
 
-        ThrowBallServerRpc();
+    //     ThrowBallServerRpc();
 
-        Invoke(nameof(ResetThrow), throwCooldown);
-    }
+    //     Invoke(nameof(ResetThrow), throwCooldown);
+    // }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void ThrowBallServerRpc(){
+    // [ServerRpc(RequireOwnership = false)]
+    // public void ThrowBallServerRpc(){
 
-        GameObject projectile = Instantiate(objectToThrow, attackPoint.position, cam.rotation);
-        projectile.GetComponent<NetworkObject>().Spawn();
-        Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
-        Vector3 forceToAdd = cam.transform.forward * throwForce + transform.up * throwUpwardForce;
+    //     GameObject projectile = Instantiate(objectToThrow, attackPoint.position, cam.rotation);
+    //     projectile.GetComponent<NetworkObject>().Spawn();
+    //     Rigidbody projectileRb = projectile.GetComponent<Rigidbody>();
+    //     Vector3 forceToAdd = cam.transform.forward * throwForce + transform.up * throwUpwardForce;
 
-        projectileRb.AddForce(forceToAdd, ForceMode.Impulse);
+    //     projectileRb.AddForce(forceToAdd, ForceMode.Impulse);
                
         
-    }
+    // }
 
-    private void ResetThrow() {
-        readyToThrow = true;
-    }
+    // private void ResetThrow() {
+    //     readyToThrow = true;
+    // }
 
 
 }

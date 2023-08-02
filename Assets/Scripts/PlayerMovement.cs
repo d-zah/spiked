@@ -21,6 +21,7 @@ public class PlayerMovement : NetworkBehaviour
     public Transform playerTransform;
     public LayerMask groundMask;
     public TMP_Text textElement;
+    public List<AudioClip> popSounds = new List<AudioClip>();
 
     Vector3 velocity;
     public bool isInGame;
@@ -33,6 +34,7 @@ public class PlayerMovement : NetworkBehaviour
 
     void Start(){
         isInGame = false;
+        playerTransform.position = new Vector3(5f, 5f, 0f);
         GameObject.Find("GameManager").GetComponent<GameManager>().checkForGame();
     }
 
@@ -99,22 +101,25 @@ public class PlayerMovement : NetworkBehaviour
     void resetPosition() {
         speed = walkingSpeed;
         consecutiveJumps = 0;
+        if(!isInPreGame){
+            int index = Random.Range(0, popSounds.Count);
+            gameObject.GetComponent<AudioSource>().PlayOneShot(popSounds[index], 0.5f);
+        }
         controller.enabled = false; //have to disable controller in order to adjust position
         switch(team){
-            case PlayerTeam.PURPLE: //1
+            case PlayerTeam.PURPLE: 
                 playerTransform.position = new Vector3(74f, 3f, 0f);
                 transform.localRotation = Quaternion.Euler(0f, -90f, 0f);
                 break;
-            case PlayerTeam.YELLOW: //2
+            case PlayerTeam.YELLOW: 
                 playerTransform.position = new Vector3(-74f, 3f, 0f);
                 transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
                 break;
-            case null: //0
+            case null: 
                 playerTransform.position = new Vector3(-5f, 3f, 0f);
                 transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
                 break;   
         }
-        
         controller.enabled = true;  
     }
 

@@ -152,6 +152,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spikeID: 0
+  popSounds:
+  - {fileID: 8300000, guid: 2f771b10eeb2c2a4cbd22d7e6569a27f, type: 3}
+  - {fileID: 8300000, guid: 2844eef0f4d206d48aa88050d4b5d6b8, type: 3}
+  - {fileID: 8300000, guid: dfe9784b66bb38445ba71c9bb4be2016, type: 3}
+  - {fileID: 8300000, guid: 71427b058dadd6d4595b7760bf484eae, type: 3}
+  - {fileID: 8300000, guid: cc8d27be7482c2a4ea09a33dd3b15d38, type: 3}
+  - {fileID: 8300000, guid: 4a89135498cb2a8418d7509e165ab59b, type: 3}
+  - {fileID: 8300000, guid: 0c0ca049271cc684dac65df75a5f4f79, type: 3}
 --- !u!82 &5707777461488504487
 AudioSource:
   m_ObjectHideFlags: 0
